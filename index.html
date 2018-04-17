@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example that shows off a blog page with a list of posts.">
+    <title>Quizify &ndash; JavaScript Quiz Library</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous">
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-old-ie-min.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+    <!--<![endif]-->
+
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="/site/css/site-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="/site/css/site.css">
+    <!--<![endif]-->
+</head>
+
+<body>
+    <div id="layout" class="pure-g">
+        <div class="sidebar pure-u-1 pure-u-md-1-4">
+            <div class="header">
+                <h1 class="brand-title">Quizify</h1>
+                <h2 class="brand-tagline">JavaScript Quiz Library</h2>
+                <p>... that you probably should't use</p>
+            </div>
+        </div>
+
+        <div class="content pure-u-1 pure-u-md-3-4">
+            <div>                
+                <h3>This is a very simple presentation of quizify, it isn't flashy. Quizify does allow you to make it flashy however.</h3>
+
+                <div id="quizContainer" style="background-color: #ecf0f1; padding: 15px;border-radius: 8px;">
+
+                </div>
+
+                <div class="footer">
+                    <div class="pure-menu pure-menu-horizontal">
+                        <ul>
+                            <li class="pure-menu-item">
+                                <a href="https://github.com/jacojvv-dev/quizify" class="pure-menu-link">GitHub Page</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/dist/quizify.min.js"></script>
+    <script src="/site/js/site.js"></script>
+
+</body>
+
+</html>

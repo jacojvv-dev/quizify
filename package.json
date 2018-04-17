@@ -1,0 +1,26 @@
+{
+  "name": "quizify",
+  "version": "1.0.0",
+  "description": "js quiz library",
+  "main": "dist/quizify.js",
+  "scripts": {
+    "test": "jest",
+    "watch" : "gulp watch"
+  },
+  "author": "Jaco Jansen van Vuuren <jacojvv.hello@gmail.com>",
+  "license": "WTFPL",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "cross-env": "^5.1.4",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-eslint": "^4.0.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-rollup": "^2.16.2",
+    "gulp-uglify": "^3.0.0",
+    "jest": "^22.4.3"
+  }
+}
