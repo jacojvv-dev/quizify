@@ -1,4 +1,4 @@
-var simpleQuiz = SimpleQuiz = [
+var simpleQuiz = [
     {
         id: 1,
         content: 'True or false? Dogs are herbivores.',
@@ -107,7 +107,7 @@ var simpleQuiz = SimpleQuiz = [
             },
             {
                 id: 14,
-                content: 'XenuTheDestroyer1212',
+                content: 'OrpheusOfTheMatrix',
                 is_correct: false
             }
         ]
@@ -115,34 +115,36 @@ var simpleQuiz = SimpleQuiz = [
 ];
 
 document.addEventListener('DOMContentLoaded', function () {
+    // the container that houses our quiz
     var quizContainer = document.getElementById('quizContainer');
 
+    // a new quizify object
     var quiz = new quizify(simpleQuiz, {
         questionNextButtonClass: 'pure-button pure-button-primary'
     });
 
+    // listen for an answer selected event on quizify, and then proceed to either the next
+    // question or the result
     quiz.addEventListener('answerSelected', handleQuizMoveToNext);
 
     function handleQuizMoveToNext() {
+        // get the next question from the quizfy object
         var question = quiz.getNext();
 
-        // remove all childrenin container
+        // remove all children  in container
         while (quizContainer.hasChildNodes()) {
             quizContainer.removeChild(quizContainer.lastChild);
         }
 
+        // do logic specific to a question here
         if (question.type === 'question')
             quizContainer.appendChild(question.data.dom_node);
+        // do logic specific to a result here, you might for instance want to post the results to a server endpoint
         else if (question.type === 'result'){
-            console.log(question);
             quizContainer.appendChild(question.data.dom_node);
-        }
-            
+        }            
     }
 
     // call once on startup
     handleQuizMoveToNext();
-
-
-
 });

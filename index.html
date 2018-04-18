@@ -4,8 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example that shows off a blog page with a list of posts.">
+
     <title>Quizify &ndash; JavaScript Quiz Library</title>
+    <meta name="description" content="quizify is a javascript library that helps you to administer quizzes on your website">
 
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous">
 
@@ -53,6 +54,8 @@
                 <a href="#data-example">Example Quiz Data</a>
                 <br>
                 <a href="#options">Options</a>
+                <br>
+                <a href="#usage">Usage</a>
             </div>
 
 
@@ -67,7 +70,7 @@
             <!-- setup block -->
             <div id="setup">
                 <h2>Setup &amp; Installation</h2>
-                <p>Download from npm and then required into your project.</p>
+                <p>Download from npm and then require into your project.</p>
                 <pre>
                     <code class="bash">
 > npm install quizify
@@ -76,7 +79,6 @@
                 <pre>
                     <code class="javascript">
 const quizify = require('quizify');
-const quiz = new quizify(data, options);
                     </code>
                 </pre>
             </div>
@@ -84,6 +86,14 @@ const quiz = new quizify(data, options);
             <!-- initilisation block -->
             <div id="initialization">
                 <h2>Initialization</h2>
+                <p>Create a new quiz object by calling new on quizify. The
+                    <a href="#data-example">data</a> argument is required, the
+                    <a href="#options">options</a> argument is optional.</p>
+                <pre>
+                    <code class="javascript">
+const quiz = new quizify(data, options = null);
+                    </code>
+                </pre>
             </div>
 
             <div id="data-example">
@@ -164,6 +174,98 @@ const quiz = new quizify(data, options);
 }
                     </code>
                 </pre>
+            </div>
+
+            <div id="usage">
+                <h2>Usage</h2>
+                <p>This is an example usage of quizify.</p>
+                <pre>
+                        <code class="javascript">
+var simpleQuiz = [
+{
+    id: 1,
+    content: 'True or false? Dogs are herbivores.',
+    weight: 5,
+    answer_limit: null,
+    answers: [
+        {
+            id: 1,
+            content: 'False, they are omnivores.',
+            is_correct: true
+        },
+        {
+            id: 2,
+            content: 'True, they are herbivores.',
+            is_correct: false
+        }
+    ]
+},
+{
+    id: 2,
+    content: 'What is the chemical symbol for the element oxygen?',
+    weight: 5,
+    answer_limit: 6,
+    answers: [
+        {
+            id: 3,
+            content: 'Ox',
+            is_correct: false
+        },
+        {
+            id: 4,
+            content: 'O',
+            is_correct: true
+        },
+        {
+            id: 5,
+            content: 'Oxy',
+            is_correct: false
+        },
+        {
+            id: 6,
+            content: 'o2',
+            is_correct: false
+        }
+    ]
+}];
+
+document.addEventListener('DOMContentLoaded', function () {
+    // the container that houses our quiz
+    var quizContainer = document.getElementById('quizContainer');
+
+    // a new quizify object
+    var quiz = new quizify(simpleQuiz, {
+        questionNextButtonClass: 'pure-button pure-button-primary'
+    });
+
+    // listen for an answer selected event on quizify, and then proceed to either the next
+    // question or the result
+    quiz.addEventListener('answerSelected', handleQuizMoveToNext);
+
+    function handleQuizMoveToNext() {
+        // get the next question from the quizfy object
+        var question = quiz.getNext();
+
+        // remove all children  in container
+        while (quizContainer.hasChildNodes()) {
+            quizContainer.removeChild(quizContainer.lastChild);
+        }
+
+        // do logic specific to a question here
+        if (question.type === 'question')
+            quizContainer.appendChild(question.data.dom_node);
+        // do logic specific to a result here, you might for 
+        // instance want to post the results to a server endpoint
+        else if (question.type === 'result'){
+            quizContainer.appendChild(question.data.dom_node);
+        }            
+    }
+
+    // call once on startup
+    handleQuizMoveToNext();
+});
+                        </code>
+                    </pre>
             </div>
 
             <div class="footer">

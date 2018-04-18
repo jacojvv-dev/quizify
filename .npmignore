@@ -1,0 +1,7 @@
+/data
+/site
+/__tests__
+*.sh
+Gemfile
+Gemfile.lock
+index.html
