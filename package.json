@@ -5,10 +5,18 @@
   "main": "dist/quizify.js",
   "scripts": {
     "test": "jest",
-    "watch" : "gulp watch"
+    "watch": "gulp watch"
   },
   "author": "Jaco Jansen van Vuuren <jacojvv.hello@gmail.com>",
   "license": "WTFPL",
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/*.{js}",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ]
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-transform-object-assign": "^6.22.0",

@@ -17,7 +17,8 @@ class quizify {
      * @param {Object} options options for quizify
      */
     constructor(data, options = {}) {
-        this._options = Object.assign(Options, options);
+        // do JSON workaround so as to keep the initial Options stateS
+        this._options = Object.assign(JSON.parse(JSON.stringify(Options)), options);
         this._position = -1;
         this._validateData(data);
         this._setup(data);
@@ -68,8 +69,10 @@ class quizify {
             // retrieve all the incorrect answers, shuffled
             let incorrectAnswers = Utils.ShuffleArray(data[i].answers.filter(ans => { return ans.is_correct === false }));
 
+
             if (data[i].answer_limit !== null) {
-                if (data[i].answer_limit <= correctAnswers.length && data[i].answer_limit > data[i].answers.length)
+                // skip if answer limit is smaller than total correct answers OR the limit is larger than the length of answers 
+                if (data[i].answer_limit <= correctAnswers.length || data[i].answer_limit > data[i].answers.length)
                     continue;
 
                 data[i].answers = correctAnswers.concat(incorrectAnswers.slice(0, data[i].answer_limit - correctAnswers.length));
@@ -98,20 +101,20 @@ class quizify {
      */
     _constructQuestionDOMNode(question) {
         // the main question container        
-        let container = DOM.CreateElement('div',this._options.questionContainerClass);                
+        let container = DOM.CreateElement('div', this._options.questionContainerClass);
 
         // the question paragraph
         let questionParagraph = DOM.CreateElement('p');
-        DOM.SetText(questionParagraph,question.content);
-        DOM.AddChild(container,questionParagraph);        
+        DOM.SetText(questionParagraph, question.content);
+        DOM.AddChild(container, questionParagraph);
 
         // the list containg answers
-        let answersList = DOM.CreateElement('ul',this._options.answerListClass);        
+        let answersList = DOM.CreateElement('ul', this._options.answerListClass);
 
         // add all possible answers
         for (let i = 0; i < question.answers.length; i++) {
             let answer = question.answers[i];
-            let answerListItem = DOM.CreateElement('li',this._options.answerListItemClass);            
+            let answerListItem = DOM.CreateElement('li', this._options.answerListItemClass);
 
             // get the correct input type to use
             let inputType = question.has_multiple_answers === true ? 'checkbox' : 'radio';
@@ -121,26 +124,26 @@ class quizify {
             input.type = inputType;
             input.name = 'quizify_answer_option';
             input.value = answer.id;
-            DOM.AddChild(answerListItem,input);            
+            DOM.AddChild(answerListItem, input);
             // append the answer text as well
             let answerText = DOM.CreateElement('span');
-            DOM.SetText(answerText,' ' + answer.content);     
-            DOM.AddChild(answerListItem,answerText);                   
+            DOM.SetText(answerText, ' ' + answer.content);
+            DOM.AddChild(answerListItem, answerText);
 
-            DOM.AddChild(answersList,answerListItem);            
+            DOM.AddChild(answersList, answerListItem);
         }
 
         // append the list of options to the container
-        DOM.AddChild(container,answersList);        
+        DOM.AddChild(container, answersList);
 
         // create the accept button
-        let acceptButton = DOM.CreateElement('button',...this._options.questionNextButtonClass.split(' '));        
+        let acceptButton = DOM.CreateElement('button', ...this._options.questionNextButtonClass.split(' '));
         acceptButton.addEventListener('click', () => {
             // call with context attached
             this._processDOMResult.call(this)
         });
-        DOM.SetText(acceptButton,'Next Question');        
-        DOM.AddChild(container,acceptButton);        
+        DOM.SetText(acceptButton, 'Next Question');
+        DOM.AddChild(container, acceptButton);
 
         return container;
     }
@@ -150,25 +153,29 @@ class quizify {
      */
     _processDOMResult() {
         // retrieve the checked input qyuizify elements
-        let res = document.querySelectorAll('input[name=quizify_answer_option]:checked');
-        if (res.length <= 0)
-            throw new Exceptions.QuizNoAnswerSelectedException();
+        let res = document.querySelectorAll('input[name=quizify_answer_option]:checked').length > 0 ?
+            document.querySelectorAll('input[name=quizify_answer_option]:checked').length :
+            document.querySelectorAll('input[name=quizify_answer_option]'); // for jest testing...
 
         // get the selection of the user
         let chosenOptions = [];
         for (let i = 0; i < res.length; i++)
-            chosenOptions.push(res[i].value)
+            if (res[i].checked === true)
+                chosenOptions.push(res[i].value)
+
+        if (chosenOptions.length <= 0)
+            throw new Exceptions.QuizNoAnswerSelectedException();
 
         // pass it to the processing function
         this.processUserAnswer(chosenOptions);
     }
 
     _constructResultsDOMNode(resultData) {
-        let container = DOM.CreateElement('div',this._options.questionContainerClass);        
+        let container = DOM.CreateElement('div', this._options.questionContainerClass);
 
-        let heading = DOM.CreateElement('h2');        
-        DOM.SetText(heading,'Quiz Results');
-        DOM.AddChild(container,heading);
+        let heading = DOM.CreateElement('h2');
+        DOM.SetText(heading, 'Quiz Results');
+        DOM.AddChild(container, heading);
 
         resultData.dom_node = container;
 

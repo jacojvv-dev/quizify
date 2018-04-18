@@ -315,8 +315,10 @@ class quizify {
             // retrieve all the incorrect answers, shuffled
             let incorrectAnswers = Utils.ShuffleArray(data[i].answers.filter(ans => { return ans.is_correct === false }));
 
+            
             if (data[i].answer_limit !== null) {
-                if (data[i].answer_limit <= correctAnswers.length && data[i].answer_limit > data[i].answers.length)
+                // skip if answer limit is smaller than total correct answers OR the limit is larger than the length of answers 
+                if (data[i].answer_limit <= correctAnswers.length || data[i].answer_limit > data[i].answers.length)
                     continue;
 
                 data[i].answers = correctAnswers.concat(incorrectAnswers.slice(0, data[i].answer_limit - correctAnswers.length));
