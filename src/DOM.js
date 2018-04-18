@@ -7,12 +7,15 @@ export default class DOM {
      * @param {string} nodeTag the tag of the element to create
      * @param {string} className name of the class to attach to the element
      */
-    static CreateElement(nodeTag, className = '') {
+    static CreateElement(nodeTag, className = '', innerText = null) {
         let el = document.createElement(nodeTag);
 
         // append class if supplied
-        if(className && className.length > 0)
-            el.classList.add(className);
+        if (className && typeof className === typeof '' && className.length > 0)
+            el.classList.add(...className.split(' '));
+        // set innerText if supplied
+        if (innerText && typeof innerText === typeof '' && innerText.length > 0)
+            DOM.SetText(el, innerText);
 
         return el;
     }

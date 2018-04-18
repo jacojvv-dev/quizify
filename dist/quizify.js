@@ -153,12 +153,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
              * @param {string} className name of the class to attach to the element
              */
             value: function CreateElement(nodeTag) {
+                var _el$classList;
+
                 var className = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+                var innerText = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
                 var el = document.createElement(nodeTag);
 
                 // append class if supplied
-                if (className && className.length > 0) el.classList.add(className);
+                if (className && (typeof className === 'undefined' ? 'undefined' : _typeof(className)) === _typeof('') && className.length > 0) (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(className.split(' ')));
+                // set innerText if supplied
+                if (innerText && (typeof innerText === 'undefined' ? 'undefined' : _typeof(innerText)) === _typeof('') && innerText.length > 0) DOM.SetText(el, innerText);
 
                 return el;
             }
@@ -344,7 +349,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             _classCallCheck(this, quizify);
 
-            this._options = _extends(Options, options);
+            // do JSON workaround so as to keep the initial Options stateS
+            this._options = _extends(JSON.parse(JSON.stringify(Options)), options);
             this._position = -1;
             this._validateData(data);
             this._setup(data);
@@ -435,8 +441,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var container = DOM.CreateElement('div', this._options.questionContainerClass);
 
                 // the question paragraph
-                var questionParagraph = DOM.CreateElement('p');
-                DOM.SetText(questionParagraph, question.content);
+                var questionParagraph = DOM.CreateElement('p', null, question.content);
                 DOM.AddChild(container, questionParagraph);
 
                 // the list containg answers
@@ -457,8 +462,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     input.value = answer.id;
                     DOM.AddChild(answerListItem, input);
                     // append the answer text as well
-                    var answerText = DOM.CreateElement('span');
-                    DOM.SetText(answerText, ' ' + answer.content);
+                    var answerText = DOM.CreateElement('span', null, ' ' + answer.content);
                     DOM.AddChild(answerListItem, answerText);
 
                     DOM.AddChild(answersList, answerListItem);
@@ -468,12 +472,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 DOM.AddChild(container, answersList);
 
                 // create the accept button
-                var acceptButton = DOM.CreateElement.apply(DOM, ['button'].concat(_toConsumableArray(this._options.questionNextButtonClass.split(' '))));
+                var acceptButton = DOM.CreateElement('button', this._options.questionNextButtonClass, 'Next Question');
                 acceptButton.addEventListener('click', function () {
                     // call with context attached
                     _this._processDOMResult.call(_this);
                 });
-                DOM.SetText(acceptButton, 'Next Question');
+
                 DOM.AddChild(container, acceptButton);
 
                 return container;
@@ -481,35 +485,56 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             /**
              * Retrieves chosen answers from the dom
+             * @private
              */
 
         }, {
             key: '_processDOMResult',
             value: function _processDOMResult() {
                 // retrieve the checked input qyuizify elements
-                var res = document.querySelectorAll('input[name=quizify_answer_option]:checked');
-                if (res.length <= 0) throw new Exceptions.QuizNoAnswerSelectedException();
+                var res = document.querySelectorAll('input[name=quizify_answer_option]:checked').length > 0 ? document.querySelectorAll('input[name=quizify_answer_option]:checked') : document.querySelectorAll('input[name=quizify_answer_option]'); // for jest testing...
 
                 // get the selection of the user
                 var chosenOptions = [];
                 for (var i = 0; i < res.length; i++) {
-                    chosenOptions.push(res[i].value);
-                } // pass it to the processing function
+                    if (res[i].checked === true) chosenOptions.push(res[i].value);
+                }if (chosenOptions.length <= 0) throw new Exceptions.QuizNoAnswerSelectedException();
+
+                // pass it to the processing function
                 this.processUserAnswer(chosenOptions);
             }
+
+            /**
+             * Builds the results DOM node      
+             * @param {object} resultData the calculated result data
+             * @private
+             */
+
         }, {
             key: '_constructResultsDOMNode',
             value: function _constructResultsDOMNode(resultData) {
                 var container = DOM.CreateElement('div', this._options.questionContainerClass);
 
-                var heading = DOM.CreateElement('h2');
-                DOM.SetText(heading, 'Quiz Results');
+                var heading = DOM.CreateElement('h2', null, 'Quiz Results');
                 DOM.AddChild(container, heading);
+
+                var totalAchievedScore = resultData.totalAchievedScore,
+                    totalPossibleScore = resultData.totalPossibleScore,
+                    percentageAchieved = resultData.percentageAchieved;
+
+                var resultText = DOM.CreateElement('p', null, 'You got ' + totalAchievedScore + ' out of ' + totalPossibleScore + ' (' + percentageAchieved + '%)');
+
+                DOM.AddChild(container, resultText);
 
                 resultData.dom_node = container;
 
                 return resultData;
             }
+
+            /**
+             * Grades the question answers of the user
+             */
+
         }, {
             key: '_gradeQuestions',
             value: function _gradeQuestions() {
@@ -550,16 +575,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 totalFinal = totalScored - totalPenalised;
 
-                console.log('Total Possible:', totalPossible);
-                console.log('Total Score:', totalScored);
-                console.log('Total Penalised:', totalPenalised);
-                console.log('Total Final:', totalFinal);
-
                 var resData = {
                     totalPossibleScore: totalPossible,
                     totalAchievedScore: totalScored,
                     totalPenalisedScore: totalPenalised,
                     totalFinalScore: totalFinal,
+                    percentageAchieved: Math.round(totalFinal / totalPossible * 100),
                     dom_node: null
                 };
 
@@ -608,7 +629,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     // return the question data
                     return new QuizifyQuestion(nextQuestion);
                 } else {
-                    // todo : return result type
                     var results = this._gradeQuestions();
                     return new QuizifyResult(results);
                 }
