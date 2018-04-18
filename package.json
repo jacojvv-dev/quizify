@@ -1,7 +1,7 @@
 {
   "name": "quizify",
   "version": "1.0.0",
-  "description": "js quiz library",
+  "description": "quizify is a javascript library that helps you to administer quizzes on your website",
   "main": "dist/quizify.js",
   "scripts": {
     "test": "jest",
@@ -9,6 +9,14 @@
   },
   "author": "Jaco Jansen van Vuuren <jacojvv.hello@gmail.com>",
   "license": "WTFPL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacojvv-dev/quizify"
+  },
+  "bugs": {
+    "url": "https://github.com/jacojvv-dev/quizify/issues"
+  },
+  "homepage": "https://jacojvv-dev.github.io/quizify/",
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
@@ -16,7 +24,7 @@
       "!**/node_modules/**",
       "!**/vendor/**"
     ]
-  },
+  },  
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-transform-object-assign": "^6.22.0",
