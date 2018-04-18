@@ -415,14 +415,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                 }
 
+                var _options = this._options,
+                    shuffle = _options.shuffle,
+                    shuffleAnswers = _options.shuffleAnswers,
+                    limitQuestionsTo = _options.limitQuestionsTo;
+
                 // shuffle questions
-                if (this._options.shuffle === true) data = Utils.ShuffleArray(data);
+
+                if (shuffle === true) data = Utils.ShuffleArray(data);
 
                 // shuffle answers
-                if (this._options.shuffleAnswers === true) for (var _i = 0; _i < data.length; _i++) {
+                if (shuffleAnswers === true) for (var _i = 0; _i < data.length; _i++) {
                     data[_i].answers = Utils.ShuffleArray(data[_i].answers);
                 } // trim question array to assigned limit
-                if (this._options.limitQuestionsTo !== null && !isNaN(this._options.limitQuestionsTo)) data = data.slice(0, this._options.limitQuestionsTo);
+                if (limitQuestionsTo !== null && !isNaN(limitQuestionsTo)) data = data.slice(0, limitQuestionsTo);
 
                 this._data = data;
             }
@@ -437,20 +443,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function _constructQuestionDOMNode(question) {
                 var _this = this;
 
+                var _options2 = this._options,
+                    questionContainerClass = _options2.questionContainerClass,
+                    answerListClass = _options2.answerListClass,
+                    answerListItemClass = _options2.answerListItemClass,
+                    questionNextButtonClass = _options2.questionNextButtonClass;
+
                 // the main question container        
-                var container = DOM.CreateElement('div', this._options.questionContainerClass);
+
+                var container = DOM.CreateElement('div', questionContainerClass);
 
                 // the question paragraph
                 var questionParagraph = DOM.CreateElement('p', null, question.content);
                 DOM.AddChild(container, questionParagraph);
 
                 // the list containg answers
-                var answersList = DOM.CreateElement('ul', this._options.answerListClass);
+                var answersList = DOM.CreateElement('ul', answerListClass);
 
                 // add all possible answers
                 for (var i = 0; i < question.answers.length; i++) {
                     var answer = question.answers[i];
-                    var answerListItem = DOM.CreateElement('li', this._options.answerListItemClass);
+                    var answerListItem = DOM.CreateElement('li', answerListItemClass);
 
                     // get the correct input type to use
                     var inputType = question.has_multiple_answers === true ? 'checkbox' : 'radio';
@@ -472,7 +485,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 DOM.AddChild(container, answersList);
 
                 // create the accept button
-                var acceptButton = DOM.CreateElement('button', this._options.questionNextButtonClass, 'Next Question');
+                var acceptButton = DOM.CreateElement('button', questionNextButtonClass, 'Next Question');
                 acceptButton.addEventListener('click', function () {
                     // call with context attached
                     _this._processDOMResult.call(_this);

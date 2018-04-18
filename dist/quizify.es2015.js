@@ -329,18 +329,20 @@ class quizify {
             }
         }
 
+        let { shuffle, shuffleAnswers, limitQuestionsTo } = this._options;
+
         // shuffle questions
-        if (this._options.shuffle === true)
+        if (shuffle === true)
             data = Utils.ShuffleArray(data);
 
         // shuffle answers
-        if (this._options.shuffleAnswers === true)
+        if (shuffleAnswers === true)
             for (let i = 0; i < data.length; i++)
                 data[i].answers = Utils.ShuffleArray(data[i].answers);
 
         // trim question array to assigned limit
-        if (this._options.limitQuestionsTo !== null && !isNaN(this._options.limitQuestionsTo))
-            data = data.slice(0, this._options.limitQuestionsTo);
+        if (limitQuestionsTo !== null && !isNaN(limitQuestionsTo))
+            data = data.slice(0, limitQuestionsTo);
 
         this._data = data;
     }
@@ -350,20 +352,22 @@ class quizify {
      * @param {Object} question the question to construct the DOM node for
      */
     _constructQuestionDOMNode(question) {
+        let { questionContainerClass, answerListClass, answerListItemClass, questionNextButtonClass } = this._options;
+
         // the main question container        
-        let container = DOM.CreateElement('div', this._options.questionContainerClass);
+        let container = DOM.CreateElement('div', questionContainerClass);
 
         // the question paragraph
         let questionParagraph = DOM.CreateElement('p', null, question.content);
         DOM.AddChild(container, questionParagraph);
 
         // the list containg answers
-        let answersList = DOM.CreateElement('ul', this._options.answerListClass);
+        let answersList = DOM.CreateElement('ul', answerListClass);
 
         // add all possible answers
         for (let i = 0; i < question.answers.length; i++) {
             let answer = question.answers[i];
-            let answerListItem = DOM.CreateElement('li', this._options.answerListItemClass);
+            let answerListItem = DOM.CreateElement('li', answerListItemClass);
 
             // get the correct input type to use
             let inputType = question.has_multiple_answers === true ? 'checkbox' : 'radio';
@@ -385,7 +389,7 @@ class quizify {
         DOM.AddChild(container, answersList);
 
         // create the accept button
-        let acceptButton = DOM.CreateElement('button', this._options.questionNextButtonClass, 'Next Question');
+        let acceptButton = DOM.CreateElement('button', questionNextButtonClass, 'Next Question');
         acceptButton.addEventListener('click', () => {
             // call with context attached
             this._processDOMResult.call(this);
