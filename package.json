@@ -1,6 +1,6 @@
 {
   "name": "quizify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "quizify is a javascript library that helps you to administer quizzes on your website",
   "main": "dist/quizify.js",
   "scripts": {

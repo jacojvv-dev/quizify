@@ -1,5 +1,8 @@
 /data
 /site
+/_site
+/coverage
+/src
 /__tests__
 *.sh
 Gemfile
